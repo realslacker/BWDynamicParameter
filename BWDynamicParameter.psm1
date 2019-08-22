@@ -415,34 +415,5 @@ function New-DynamicParameterDictionary {
 
 }
 
-<#
-.SYNOPSIS
-Initializes dynamic parameter variables into the current scope.
-
-.DESCRIPTION
-Initializes dynamic parameter variables into the current scope.
-By default Dynamic Parameter variables are not expanded like parameter variables.
-This function expands any bound parameter variables found which are not already set.
-#>
-function Initialize-DynamicParameterVariables {
-
-    [CmdletBinding()]
-    param()
-
-    # get common parameters
-    $CommonParameters = ( Get-Command Initialize-DynamicParameterVariables | Select-Object -ExpandProperty Parameters ).Keys
-
-    # get bound parameters from parent scope
-    $BoundParameters = Get-Variable -Name PSBoundParameters -Scope 1 |
-        Select-Object -ExpandProperty Value
-
-    # pick out bound parameters not in that set
-    $BoundParameters.Keys |
-        Where-Object { $CommonParameters -notcontains $_ } |
-        Where-Object { -not( Get-Variable -Name $_ -Scope 1 -ErrorAction SilentlyContinue ) } |
-        ForEach-Object { New-Variable -Name $_ -Scope 1 -Value $BoundParameters[$_] }
-
-}
-
-New-Alias -Name DynamicParameter -Value New-DynamicParam
+New-Alias -Name DynamicParameter -Value New-DynamicParameter
 New-Alias -Name DynamicParameterDictionary -Value New-DynamicParameterDictionary
