@@ -100,70 +100,7 @@ Optionally append the parameter to a DPDictionary object.
 
 .EXAMPLE
 
-# This example illustrates the creation of many dynamic parameters using New-DynamicParam
-# You must create a RuntimeDefinedParameterDictionary object ($dictionary here)
-# To each New-DynamicParameter call, add the -DPDictionary parameter pointing to this RuntimeDefinedParameterDictionary
-# At the end of the DynamicParam block, return the RuntimeDefinedParameterDictionary
-# Initialize all bound parameters using the provided block or similar code
-
-function Test-DynamicParameter {
-
-    [CmdletBinding()]
-    param(
-
-        [switch]
-        $ChangeParams
-        
-    )
-        
-    dynamicparam {
-
-        DynamicParameterDictionary {
-
-            DynamicParameter -Name AlwaysParam -ValidateSet @( gwmi win32_volume | %{$_.driveletter} | sort )
-
-            #Add dynamic parameters to $DPDictionary
-            if ( $ChangeParams.IsPresent ) {
-
-                DynamicParameter -Name Param1 -ValidateSet 1,2 -mandatory
-                DynamicParameter -Name Param2
-                DynamicParameter -Name Param3 -Type DateTime
-            
-            } else {
-
-                DynamicParameter -Name Param4 -Mandatory
-                DynamicParameter -Name Param5
-                DynamicParameter -Name Param6 -Type DateTime
-            
-            }
-
-        }
-
-    }
-
-    begin {
-
-        # this standard block of code loops through bound parameters...
-        # if no corresponding variable exists, one is created
-
-        # get common parameters
-        $CommonParameters = { function _temp { [CmdletBinding()]param() }; ( Get-Command _temp | Select-Object -ExpandProperty Parameters ).Keys }.Invoke()
-
-        # pick out bound parameters not in that set
-        $PSBoundParameters.Keys |
-            Where-Object { $_ -notin $CommonParameters } |
-            Where-Object { -not( Get-Variable -Name $_ -Scope 0 -ErrorAction SilentlyContinue ) } |
-            ForEach-Object { New-Variable -Name $_ -Value $PSBoundParameters[$_] }
-    }
-
-    process {
-
-        #Appropriate variables should now be defined and accessible
-        Get-Variable -scope 0 |
-            Where-Object { $_.Name -in $PSBoundParameters.Keys }
-
-    }
-}
+PS C:\ > $Param1 = New-DynamicParameter -Name Param1 -ValidateSet 1,2 -Mandatory
 
 .FUNCTIONALITY
 PowerShell Language
@@ -475,6 +412,35 @@ function New-DynamicParameterDictionary {
         Write-Output $DynamicParameterDictionary
 
     }
+
+}
+
+<#
+.SYNOPSIS
+Initializes dynamic parameter variables into the current scope.
+
+.DESCRIPTION
+Initializes dynamic parameter variables into the current scope.
+By default Dynamic Parameter variables are not expanded like parameter variables.
+This function expands any bound parameter variables found which are not already set.
+#>
+function Initialize-DynamicParameterVariables {
+
+    [CmdletBinding()]
+    param()
+
+    # get common parameters
+    $CommonParameters = ( Get-Command Initialize-DynamicParameterVariables | Select-Object -ExpandProperty Parameters ).Keys
+
+    # get bound parameters from parent scope
+    $BoundParameters = Get-Variable -Name PSBoundParameters -Scope 1 |
+        Select-Object -ExpandProperty Value
+
+    # pick out bound parameters not in that set
+    $BoundParameters.Keys |
+        Where-Object { $CommonParameters -notcontains $_ } |
+        Where-Object { -not( Get-Variable -Name $_ -Scope 1 -ErrorAction SilentlyContinue ) } |
+        ForEach-Object { New-Variable -Name $_ -Scope 1 -Value $BoundParameters[$_] }
 
 }
 

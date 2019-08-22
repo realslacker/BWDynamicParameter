@@ -12,7 +12,7 @@
 RootModule = 'BWDynamicParameter.psm1'
 
 # Version number of this module.
-ModuleVersion = '2019.8.22.1324'
+ModuleVersion = '2019.8.22.1550'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
