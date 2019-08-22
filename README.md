@@ -1,28 +1,34 @@
 # BWDynamicParameter
 Easily create dynamic parameters with extended validation.
 
-# Examples
+## Installing
 
-## Generating a Dynamic Parameter
+```PowerShell
+PS C:\> Install-Module -Name BWDynamicParameter -Repository PSGallery
+```
+
+## Examples
+
+### Generating a Dynamic Parameter
 
 This example shows creating a new Dynamic Parameter and storing it in the $EmailParam variable. This parameter is **mandatory**, is validated against a regex for formatting, and uses validate script to verify the domain has a valid MX.
 
 ```PowerShell
-C:\ > $EmailParam = New-DynamicParameter -Name 'Email' -Mandatory -Alias 'Mail' -ValidatePattern '^.+@.+\..+$' -ValidateScript { [bool](Resolve-DnsName -Type MX -Name $_.Split('@', 2)[1]) -ErrorAction SilentlyContinue }
+$EmailParam = New-DynamicParameter -Name 'Email' -Mandatory -Alias 'Mail' -ValidatePattern '^.+@.+\..+$' -ValidateScript { [bool](Resolve-DnsName -Type MX -Name $_.Split('@', 2)[1]) -ErrorAction SilentlyContinue }
 ```
 
-## Generating a Dynamic Parameter Dictionary
+### Generating a Dynamic Parameter Dictionary
 
 You can create a basic DP Dictionary by calling New-DynamicParameterDictionary
 
 ```PowerShell
-C:\ > $DPDictionary = New-DynamicParameterDictionary
+$DPDictionary = New-DynamicParameterDictionary
 ```
 
 You can also include previously generated parameters in the command line
 
 ```PowerShell
-C:\ > New-DynamicParameterDictionary -DynamicParameters $EmailParam
+New-DynamicParameterDictionary -DynamicParameters $EmailParam
 ```
 
 Finally, you can supply a script block allowing logic in the definition
@@ -35,7 +41,7 @@ DynamicParameterDictionary {
 }
 ```
 
-## Basic Script Example
+## Script Template
 
 This script shows how you might use this module in your script.
 
