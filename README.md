@@ -78,7 +78,11 @@ function Test-DynamicParameter {
     begin {
         
         # expands $PSBoundParameters into the current scope
-        Initialize-DynamicParameterVariables
+        $CommonParameters = { function _temp { [CmdletBinding()] param() }; (Get-Command _temp | Select-Object -ExpandProperty Parameters).Keys }.Invoke()
+        $PSBoundParameters.Keys |
+            Where-Object { $CommonParameters -notcontains $_ } |
+            Where-Object { -not( Get-Variable -Name $_ -Scope 0 -ErrorAction SilentlyContinue ) } |
+            ForEach-Object { New-Variable -Name $_ -Scope 0 -Value $PSBoundParameters[$_] }
         
     }
     
