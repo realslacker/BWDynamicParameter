@@ -83,6 +83,11 @@ Allow the parameter to be populated by object property names from the pipeline.
 .PARAMETER ValueFromRemainingArguments
 Allow the parameter to be populated by the remaining arguments.
 
+.PARAMETER ArgumentCompleter
+Argument completer script block.
+
+See: https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/register-argumentcompleter?view=powershell-7
+
 .PARAMETER DontShow
 Hide the parameter from auto-complete.
 
@@ -183,6 +188,9 @@ function New-DynamicParameter {
 
         [switch]
         $ValueFromRemainingArguments,
+
+        [scriptblock]
+        $ArgumentCompleter,
 
         [switch]
         $DontShow,
@@ -321,6 +329,15 @@ function New-DynamicParameter {
 
         $AttributeCollection.Add( $ParameterAlias )
     
+    }
+
+    # create argument completer if specified
+    if ( $ArgumentCompleter -and [bool]([System.Management.Automation.PSTypeName]'System.Management.Automation.ArgumentCompleterAttribute').Type ) {
+
+        $ParameterArgumentCompleter = New-Object -TypeName System.Management.Automation.ArgumentCompleterAttribute ( $ArgumentCompleter )
+
+        $AttributeCollection.Add( $ParameterArgumentCompleter )
+
     }
 
     # create the parameter object
