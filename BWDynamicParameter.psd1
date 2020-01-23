@@ -27,7 +27,7 @@ Author = 'Shannon Graybrook'
 CompanyName = 'Brooksworks'
 
 # Copyright statement for this module
-Copyright = '(c) 2019 Shannon Graybrook. All rights reserved.'
+Copyright = '2020 (c) Shannon Graybrook'
 
 # Description of the functionality provided by this module
 Description = 'Easily create dynamic parameters with extended validation.'
@@ -98,10 +98,10 @@ PrivateData = @{
         # Tags = @()
 
         # A URL to the license for this module.
-        # LicenseUri = ''
+        LicenseUri = 'https://raw.githubusercontent.com/realslacker/BWDynamicParameter/master/LICENSE.TXT'
 
         # A URL to the main website for this project.
-        # ProjectUri = ''
+        ProjectUri = 'https://github.com/realslacker/BWDynamicParameter'
 
         # A URL to an icon representing this module.
         # IconUri = ''
