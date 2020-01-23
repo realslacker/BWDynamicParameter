@@ -5,7 +5,7 @@ $ScriptPath = Split-Path (Get-Variable MyInvocation -Scope Script).Value.Mycomma
 $ModuleName = (Get-Item $ScriptPath).BaseName
 
 # create build directory
-$BuildNumber = Get-Date -Format yy.M.d.Hmm
+$BuildNumber = Get-Date -Format 'yy.M.d.Hmm'
 $BuildDirectory = New-Item -Path "$ScriptPath\build\$BuildNumber\$ModuleName" -ItemType Directory -ErrorAction Stop
 
 # excluded files / directories
@@ -34,6 +34,6 @@ Get-ChildItem -Path $BuildDirectory -Filter '*.psm1' |
 # publish
 if ( $Publish ) {
 
-    Publish-Module -Path "$BuildDirectory"
+    Publish-Module -Path "$BuildDirectory" @PSGalleryPublishSplat
 
 }
